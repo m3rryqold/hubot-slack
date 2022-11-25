@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hubot
+  labels:
+    app: hubot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hubot
+  template:
+    metadata:
+      labels:
+          app: hubot
+    spec:
+      containers:
+      - name: hubot
+        image: gcr.io/dev-streets/hubot
+        env:
+        - name: HUBOT_SLACK_TOKEN
+          # valueFrom:
+          #     secretKeyRef:
+          #     name: hubot-sa
+          #     key: slack-token
+          value: xoxb-4446357609872-4422701421698-stIBOiBSqmRM6jG1ZDSnB8eS
+        - name: HUBOT_GOOGLE_CLOUD_PROJECT
+          value: dev-streets
+        # volumeMounts:
+        # - name: hubot-scripts
+        #   mountPath: /home/hubot/scripts
+        #   volumeMounts:
+        # - name: external-scripts
+          # mountPath: /home/hubot/scripts
+    # volumes:
+    # - name: hubot-scripts
+    #   configMap:
+    #     name: hubot-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: hubot
+spec:
+    type: LoadBalancer
+    ports:
+    - port: 80
+      targetPort: 8080
+    selector:
+        app: hubot
